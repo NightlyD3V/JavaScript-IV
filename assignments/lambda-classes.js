@@ -23,6 +23,16 @@ class Instructor extends People {
     grade(student, subject) {
         console.log(`${student} recieves a perfect score on ${subject}`);
     }
+    gradeStudent(student) {
+        let max = Math.floor(101);
+        let min = Math.ceil(0);
+        student.grade = Math.floor(Math.random() * (max - min)) + min;
+        if(student.grade < 100) {
+        console.log(`${student.name} recieves a: ${student.grade}`);
+        } else {
+            console.log(`${student.name} GRADUATED!!`)
+        }
+    }
 }
 
 class Students extends People {
@@ -31,6 +41,7 @@ class Students extends People {
         this.previousBackground = args.previousBackground;
         this.className = args.className;
         this.favSubjects = args.favSubjects;
+        this.grade = args.grade;
     }
     listsSubjects() {
         console.log(`${this.favSubjects}`);
@@ -41,6 +52,17 @@ class Students extends People {
     sprintChallenge(subject) {
         console.log(`${this.name} has begun the sprint challenge for ${subject}`);
     }
+    graduate(student, teacher) {
+        for(let i = student.grade;i < 70;i++){
+            if(student.grade > 70) {
+                console.log(`Ready to graduate ${student.name}`);
+                break;
+            } else {
+               teacher.gradeStudent(student);
+               i++;
+            }
+        }
+    }
 }
 
 class ProjectManagers extends Instructor {
@@ -50,7 +72,7 @@ class ProjectManagers extends Instructor {
         this.favInstructor = args.favInstructor;
     }
     standUp(channel) {
-        console.log(`${this.name} announces to ${Students.name}, @channel standy times!`);
+        console.log(`${this.name} announces to ${Students.name}, @${channel} standy times!`);
     }
     debugsCode(student, subject) {
         console.log(`${this.name} debugs ${student}'s code on ${subject}`);
@@ -68,7 +90,8 @@ const Tyler = new Students ({
     age: 23,
     location: 'NJ',
     previousBackground: 'Mechanics',
-    favSubjects: 'Web Development'
+    favSubjects: 'Web Development',
+    grade: 0
 });
 
 const Daniel = new ProjectManagers ({
@@ -80,12 +103,15 @@ const Daniel = new ProjectManagers ({
 Josh.speak();
 Josh.demo('JavaScript');
 Josh.grade('Tyler', 'JSIV');
+Josh.gradeStudent(Tyler);
 //      STUDENT
 Tyler.speak();
 Tyler.listsSubjects();
 Tyler.PRAssingment('JSIV');
 Tyler.sprintChallenge('JSV');
+Tyler.graduate(Tyler, Josh);
 //   PROJECT MANAGER
 Daniel.speak();
 Daniel.standUp('web18_dan');
 Daniel.debugsCode('Tyler', 'JSIV');
+Daniel.gradeStudent(Tyler);
