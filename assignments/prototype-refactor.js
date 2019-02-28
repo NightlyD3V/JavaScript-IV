@@ -22,37 +22,64 @@ Prototype Refactor
   * dimensions (These represent the character's size in the video game)
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
-//
-function GameObject(args) {
-    this.createdAt = args.createdAt;
-    this.name = args.name;
-    this.dimensions = args.dimensions;
-  }
+/*______________________________________*/
+//      *OLD CODE*
+// function GameObject(args) {
+//     this.createdAt = args.createdAt;
+//     this.name = args.name;
+//     this.dimensions = args.dimensions;
+//   }
   
-  GameObject.prototype.destroy = function () {
-    return `${this.name} was removed from the game`;
-  }
-  
+//   GameObject.prototype.destroy = function () {
+//     return `${this.name} was removed from the game`;
+//   }
+/*_____________________________________*/
+
+//      *REFACTOR* 
+class GameObject {
+    constructor(args) {
+        this.createdAt = args.createdAt;
+        this.name = args.name;
+        this.dimensions = args.dimensions;
+    }
+    destroy() {
+        return `${this.name} was removed from the game`;
+    }
+}
   /*
     === CharacterStats ===
     * healthPoints
     * takeDamage() // prototype method -> returns the string '<object name> took damage.'
     * should inherit destroy() from GameObject's prototype
   */
+ /*_____________________________________*/
+//           *OLD CODE*
+//   function CharacterStats(stats) {
+//     this.healthPoints = stats.healthPoints;
+//     this.attackPoints = stats.attackPoints;
+//     // Inherits GameObjects args
+//     GameObject.call(this, stats);
+//   }
   
-  function CharacterStats(stats) {
-    this.healthPoints = stats.healthPoints;
-    this.attackPoints = stats.attackPoints;
-    // Inherits GameObjects args
-    GameObject.call(this, stats);
-  }
+//   // Inheritance methods from GameObject
+//   CharacterStats.prototype = Object.create(GameObject.prototype);
   
-  // Inheritance methods from GameObject
-  CharacterStats.prototype = Object.create(GameObject.prototype);
-  
-  CharacterStats.prototype.takeDamage = function() {
-    return `${this.name} took damage`;
-  }
+//   CharacterStats.prototype.takeDamage = function() {
+//     return `${this.name} took damage`;
+//   }
+/*____________________________________*/
+
+  //       *REFACTOR* 
+class CharacterStats extends GameObject {
+    constructor(stats) {
+        super(stats);
+        this.healthPoints = stats.healthPoints;
+        this.attackPoints = stats.attackPoints;
+    }
+    takeDamage() {
+        return `${this.name} took damage`;
+    }
+}
   
   /*
     === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -63,23 +90,36 @@ function GameObject(args) {
     * should inherit destroy() from GameObject through CharacterStats
     * should inherit takeDamage() from CharacterStats
   */
-   
-  function Humanoid(args) {
-    this.team = args.team;
-    this.weapons = args.weapons;
-    this.language = args.language;
-    // Inherits CharacterStats stats
-    CharacterStats.call(this, args);
-  }
+/*__________________________________*/
+//           *OLD CODE*
+//   function Humanoid(args) {
+//     this.team = args.team;
+//     this.weapons = args.weapons;
+//     this.language = args.language;
+//     // Inherits CharacterStats stats
+//     CharacterStats.call(this, args);
+//   }
   
-  // Inherit methods from GameObject & CharacterStats
-  Humanoid.prototype = Object.create(CharacterStats.prototype);
+//   // Inherit methods from GameObject & CharacterStats
+//   Humanoid.prototype = Object.create(CharacterStats.prototype);
   
-  Humanoid.prototype.greet = function() {
-    return `${this.name} offers a greeting in ${this.language}`;
-  }
+//   Humanoid.prototype.greet = function() {
+//     return `${this.name} offers a greeting in ${this.language}`;
+//   }
+ /*________________________________*/ 
   
-  
+ //           *REFACTOR*
+ class Humanoid extends CharacterStats {
+     constructor(args){
+         super(args);
+         this.team = args.team;
+         this.weapons = args.weapons;
+         this.language = args.language;
+     }
+     greet() {
+         return `${this.name} offers a greeting in ${this.language}`;
+     }
+ }
   /*
     * Inheritance chain: GameObject -> CharacterStats -> Humanoid
     * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -156,35 +196,60 @@ function GameObject(args) {
     // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
     // * Create two new objects, one a villain and one a hero and fight it out with methods!
   
-  // Constructors 
+//         *OLD CODE*
+/*_______________________________*/
+//   function Hero(args) {
+//     // Inherit args
+//     Humanoid.call(this, args);
+//   }
   
-  function Hero(args) {
-    // Inherit args
-    Humanoid.call(this, args);
-  }
+//   // Inherit from Humanoid 
+//   Hero.prototype = Object.create(Humanoid.prototype);
   
-  // Inherit from Humanoid 
-  Hero.prototype = Object.create(Humanoid.prototype);
-  
-  // Fight Method
-  Hero.prototype.fight = function(who) {
-    while(who.healthPoints != -1) {
-      if(who.healthPoints === 0) {
-       console.log(who.destroy());
-       break;
-      } else {
-      console.log(who.healthPoints -= `${this.attackPoints}` , `${this.name} just attacked ${who.name} with ${this.weapons[0]} for ${this.attackPoints}`);
-      }
+//   // Fight Method
+//   Hero.prototype.fight = function(who) {
+//     while(who.healthPoints != -1) {
+//       if(who.healthPoints === 0) {
+//        console.log(who.destroy());
+//        break;
+//       } else {
+//       console.log(who.healthPoints -= `${this.attackPoints}` , `${this.name} just attacked ${who.name} with ${this.weapons[0]} for ${this.attackPoints}`);
+//       }
+//     }
+//   }
+  /*____________________________*/
+//          *REFACTOR*
+class Hero extends Humanoid {
+    constructor(args) {
+        super(args);
     }
-  }
-  // VILLIAN CONSTRUCT
-  function Villian(args) {
-    // Inherit args
-    Humanoid.call(this, args);
-  }
-  //Inherit from Humanoid 
-  Villian.prototype = Object.create(Humanoid.prototype);
-  
+    fight(who) {
+        while(who.healthPoints != -1) {
+            if(who.healthPoints === 0) {
+            console.log(who.destroy());
+            break;
+            } else {
+            console.log(who.healthPoints -= `${this.attackPoints}` , `${this.name} just attacked ${who.name} with ${this.weapons[0]} for ${this.attackPoints}`);
+            }
+        }
+    }
+}
+//        *OLD CODE*
+/*_________________________________*/
+  //    VILLIAN CONSTRUCT
+//   function Villian(args) {
+//     // Inherit args
+//     Humanoid.call(this, args);
+//   }
+//   //Inherit from Humanoid 
+//   Villian.prototype = Object.create(Humanoid.prototype);
+/*_________________________________*/
+//        *REFACTOR*
+class Villian extends Humanoid {
+    constructor(args) {
+        super(args);
+    }
+}
   // Objects
   const hero = new Hero({
     createdAt: new Date(),
