@@ -29,6 +29,7 @@ class Instructor extends People {
         student.grade = Math.floor(Math.random() * (max - min)) + min;
         if(student.grade < 100) {
         console.log(`${student.name} recieves a: ${student.grade}`);
+        return student.grade;
         } else {
             console.log(`${student.name} GRADUATED!!`)
         }
@@ -53,13 +54,14 @@ class Students extends People {
         console.log(`${this.name} has begun the sprint challenge for ${subject}`);
     }
     graduate(student, teacher) {
-        for(let i = student.grade;i < 70;i++){
-            if(student.grade > 70) {
+        let i = student.grade;
+        while(true){
+            if(i > 70) {
                 console.log(`Ready to graduate ${student.name}`);
                 break;
             } else {
-               teacher.gradeStudent(student);
-               i++;
+               i = teacher.gradeStudent(student);
+               continue;
             }
         }
     }
